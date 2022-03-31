@@ -1,0 +1,292 @@
+group_manager:
+  # group_manager
+  # DEFAULT_GROUP_LEVEL: 默认群权限
+  # DEFAULT_GROUP_BOT_STATUS: 默认进群总开关状态
+  DEFAULT_GROUP_LEVEL: 5
+  DEFAULT_GROUP_BOT_STATUS: true
+hook:
+  # 基础hook配置
+  # CHECK_NOTICE_INFO_CD: 群检测，个人权限检测等各种检测提示信息cd
+  # MALICIOUS_BAN_TIME: 恶意命令触发检测触发后ban的时长（分钟）
+  # MALICIOUS_CHECK_TIME: 恶意命令触发检测规定时间内（秒）
+  # MALICIOUS_BAN_COUNT: 恶意命令触发检测最大触发次数
+  # BAN_RESULT: 对被ban用户发送的消息
+  CHECK_NOTICE_INFO_CD: 300
+  MALICIOUS_BAN_TIME: 30
+  MALICIOUS_CHECK_TIME: 5
+  MALICIOUS_BAN_COUNT: 6
+  BAN_RESULT: 才不会给你发消息.
+_task:
+  # _task
+  # DEFAULT_BROADCAST: 被动 广播 进群默认开关状态
+  # DEFAULT_ZWA: 被动 早晚安 进群默认开关状态
+  # DEFAULT_GROUP_WELCOME: 被动 进群欢迎 进群默认开关状态
+  # DEFAULT_REFUND_GROUP_REMIND: 被动 退群提醒 进群默认开关状态
+  # DEFAULT_OPEN_CASE_RESET_REMIND: 被动 每日开箱重置提醒 进群默认开关状态
+  # DEFAULT_BILIBILI_PARSE: 被动 B站转发解析 进群默认开关状态
+  # DEFAULT_FUDU: 被动 复读 进群默认开关状态
+  # DEFAULT_GENSHIN_ALC: 被动 原神黄历提醒 进群默认开关状态
+  # DEFAULT_EPIC_FREE_GAME: 被动 epic免费游戏 进群默认开关状态
+  # DEFAULT_PA: 被动 爬 进群默认开关状态
+  DEFAULT_BROADCAST: true
+  DEFAULT_ZWA: true
+  DEFAULT_GROUP_WELCOME: true
+  DEFAULT_REFUND_GROUP_REMIND: true
+  DEFAULT_OPEN_CASE_RESET_REMIND: true
+  DEFAULT_BILIBILI_PARSE: true
+  DEFAULT_FUDU: true
+  DEFAULT_GENSHIN_ALC: true
+  DEFAULT_EPIC_FREE_GAME: true
+  DEFAULT_PA: true
+_backup:
+  # 文件备份
+  # BACKUP_FLAG: 是否开启文件备份
+  # BACKUP_DIR_OR_FILE: 备份的文件夹或文件
+  BACKUP_FLAG: true
+  BACKUP_DIR_OR_FILE:
+  - data/black_word
+  - data/configs
+  - data/statistics
+  - data/word_bank
+  - data/manager
+  - configs
+invite_manager:
+  # 好友群聊处理请求
+  # MESSAGE: 强制拉群后进群回复的内容..
+  # FLAG: 被强制拉群后是否直接退出
+  # WELCOME_MSG_CD: 群欢迎消息cd
+  # AUTO_ADD_FRIEND: 是否自动同意好友添加
+  MESSAGE: 请不要未经同意就拉小真寻入群！告辞！
+  FLAG: true
+  WELCOME_MSG_CD: 5
+  AUTO_ADD_FRIEND: false
+admin_bot_manage:
+  # 群管理员操作
+  # SET_GROUP_WELCOME_MESSAGE_LEVEL: 设置群欢迎消息权限
+  # CHANGE_GROUP_SWITCH_LEVEL: 开关群功能权限
+  # ADMIN_DEFAULT_AUTH: 默认群管理员权限
+  SET_GROUP_WELCOME_MESSAGE_LEVEL: 2
+  CHANGE_GROUP_SWITCH_LEVEL: 2
+  ADMIN_DEFAULT_AUTH: 5
+shop:
+  # shop
+  # IMPORT_DEFAULT_SHOP_GOODS: 导入商店自带的三个商品
+  IMPORT_DEFAULT_SHOP_GOODS: true
+alapi:
+  # alapi
+  # ALAPI_TOKEN: 在 https://admin.alapi.cn/user/login 登录后获取token
+  ALAPI_TOKEN:
+draw_card:
+  # 游戏抽卡
+  # PRTS_FLAG: 明日方舟 抽卡开关
+  # GENSHIN_FLAG: 原神 抽卡开关
+  # PRETTY_FLAG: 赛马娘 抽卡开关
+  # GUARDIAN_FLAG: 坎公骑冠剑 抽卡开关
+  # PCR_FLAG: 公主连结 抽卡开关
+  # AZUR_FLAG: 碧蓝航线 抽卡开关
+  # FGO_FLAG: 命运-冠位指定（FGO） 抽卡开关
+  # ONMYOJI_FLAG: 阴阳师 抽卡开关
+  # PCR_TAI: pcr台服卡池 抽卡开关
+  # SEMAPHORE: 异步数据下载数量限制
+  PRTS_FLAG: true
+  GENSHIN_FLAG: true
+  PRETTY_FLAG: true
+  GUARDIAN_FLAG: true
+  PCR_FLAG: true
+  AZUR_FLAG: true
+  FGO_FLAG: true
+  ONMYOJI_FLAG: true
+  PCR_TAI: true
+  SEMAPHORE: 5
+genshin:
+  # genshin
+  # MHYVERSION: None
+  # SALT: None
+  # N: None
+  # CLIENT_TYPE: None
+  MHYVERSION: 2.11.1
+  SALT: xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs
+  N: h8w582wxwgqvahcdkpvdhbh2w9casgfl
+  CLIENT_TYPE: '5'
+word_bank:
+  # 词库问答
+  # WORD_BANK_LEVEL [LEVEL]: 设置增删词库的权限等级
+  WORD_BANK_LEVEL [LEVEL]: 5
+pixiv:
+  # pixiv
+  # PIXIV_NGINX_URL: Pixiv反向代理
+  PIXIV_NGINX_URL: i.pixiv.re
+hibiapi:
+  # hibiapi
+  # HIBIAPI: 如果没有自建或其他hibiapi请不要修改
+  HIBIAPI: https://api.obfs.dev
+pix:
+  # PIX图库
+  # PIX_IMAGE_SIZE: PIX图库下载的画质 可能的值：original：原图，master：缩略图（加快发送速度）
+  # SEARCH_HIBIAPI_BOOKMARKS: 最低收藏，PIX使用HIBIAPI搜索图片时达到最低收藏才会添加至图库
+  # WITHDRAW_PIX_MESSAGE: 自动撤回，参1：延迟撤回色图时间(秒)，0 为关闭 | 参2：监控聊天类型，0(私聊) 1(群聊) 2(群聊+私聊)
+  # PIX_OMEGA_PIXIV_RATIO: PIX图库 与 额外图库OmegaPixivIllusts 混合搜索的比例 参1：PIX图库 参2：OmegaPixivIllusts扩展图库（没有此图库请设置为0）
+  # TIMEOUT: 下载图片超时限制（秒）
+  # SHOW_INFO: 是否显示图片的基本信息，如PID等
+  # MAX_ONCE_NUM2FORWARD: 单次发送的图片数量达到指定值时转发为合并消息
+  PIX_IMAGE_SIZE: master
+  SEARCH_HIBIAPI_BOOKMARKS: 5000
+  WITHDRAW_PIX_MESSAGE:
+  - 0
+  - 1
+  PIX_OMEGA_PIXIV_RATIO:
+  - 10
+  - 0
+  TIMEOUT: 10
+  SHOW_INFO: true
+  MAX_ONCE_NUM2FORWARD:
+image_management:
+  # 图库操作
+  # IMAGE_DIR_LIST: 公开图库列表，可自定义添加 [如果含有send_setu插件，请不要添加色图库]
+  # WITHDRAW_IMAGE_MESSAGE: 自动撤回，参1：延迟撤回发送图库图片的时间(秒)，0 为关闭 | 参2：监控聊天类型，0(私聊) 1(群聊) 2(群聊+私聊)
+  # DELETE_IMAGE_LEVEL: 删除图库图片需要的管理员等级
+  # MOVE_IMAGE_LEVEL: 移动图库图片需要的管理员等级
+  # UPLOAD_IMAGE_LEVEL: 上传图库图片需要的管理员等级
+  # SHOW_ID: 是否消息显示图片下标id
+  IMAGE_DIR_LIST:
+  - 美图
+  - 萝莉
+  - 壁纸
+  WITHDRAW_IMAGE_MESSAGE:
+  - 0
+  - 1
+  DELETE_IMAGE_LEVEL: 7
+  MOVE_IMAGE_LEVEL: 7
+  UPLOAD_IMAGE_LEVEL: 6
+  SHOW_ID: true
+reload_setting:
+  # 重载插件配置
+  # AUTO_RELOAD: 自动重载配置文件
+  # AUTO_RELOAD_TIME: 控制自动重载配置文件时长
+  AUTO_RELOAD: false
+  AUTO_RELOAD_TIME: 180
+open_cases:
+  # 开箱
+  # INITIAL_OPEN_CASE_COUNT: 初始每日开箱次数
+  # EACH_IMPRESSION_ADD_COUNT: 每 * 点好感度额外增加开箱次数
+  # COOKIE: BUFF的cookie
+  # BUFF_PROXY: 使用代理访问BUFF
+  INITIAL_OPEN_CASE_COUNT: 20
+  EACH_IMPRESSION_ADD_COUNT: 3
+  COOKIE:
+  BUFF_PROXY:
+search_buff_skin_price:
+  # BUFF查询皮肤
+  # BUFF_PROXY: BUFF代理，有些厂ip可能被屏蔽
+  # COOKIE: BUFF的账号cookie
+  BUFF_PROXY:
+  COOKIE:
+mute:
+  # 刷屏禁言
+  # MUTE_LEVEL [LEVEL]: 更改禁言设置的管理权限
+  # MUTE_DEFAULT_COUNT: 刷屏禁言默认检测次数
+  # MUTE_DEFAULT_TIME: 刷屏检测默认规定时间
+  # MUTE_DEFAULT_DURATION: 刷屏检测默禁言时长（分钟）
+  MUTE_LEVEL [LEVEL]: 5
+  MUTE_DEFAULT_COUNT: 10
+  MUTE_DEFAULT_TIME: 7
+  MUTE_DEFAULT_DURATION: 10
+check_zhenxun_update:
+  # 自动更新
+  # AUTO_UPDATE_ZHENXUN: 真寻是否自动检查更新
+  AUTO_UPDATE_ZHENXUN: false
+ban:
+  # 封禁Ban用户
+  # BAN_LEVEL [LEVEL]: ban/unban所需要的管理员权限等级
+  BAN_LEVEL [LEVEL]: 5
+nickname:
+  # 昵称系统
+  # BLACK_WORD: 昵称所屏蔽的关键词，会被替换为 *
+  BLACK_WORD:
+  - 爸
+  - 爹
+  - 爷
+bt:
+  # 磁力搜索
+  # BT_MAX_NUM: 单次BT搜索返回最大消息数量
+  BT_MAX_NUM: 10
+search_image:
+  # 识图
+  # MAX_FIND_IMAGE_COUNT: 识图返回的最大结果数
+  # API_KEY: Saucenao的API_KEY，通过 https://saucenao.com/user.php?page=search-api 注册获取
+  MAX_FIND_IMAGE_COUNT: 3
+  API_KEY:
+coser:
+  # coser
+  # WITHDRAW_COS_MESSAGE: 自动撤回，参1：延迟撤回色图时间(秒)，0 为关闭 | 参2：监控聊天类型，0(私聊) 1(群聊) 2(群聊+私聊)
+  WITHDRAW_COS_MESSAGE:
+  - 0
+  - 1
+resin_remind:
+  # 原神树脂提醒
+  # AUTO_CLOSE_QUERY_FAIL_RESIN_REMIND: 当请求连续三次失败时，关闭用户的树脂提醒
+  # CUSTOM_RESIN_OVERFLOW_REMIND: 自定义树脂溢出指定数量时的提醒，空值是为关闭
+  AUTO_CLOSE_QUERY_FAIL_RESIN_REMIND: true
+  CUSTOM_RESIN_OVERFLOW_REMIND: 20
+russian:
+  # 俄罗斯轮盘
+  # MAX_RUSSIAN_BET_GOLD: 俄罗斯轮盘最大赌注金额
+  MAX_RUSSIAN_BET_GOLD: 1000
+send_setu:
+  # 色图
+  # WITHDRAW_SETU_MESSAGE: 自动撤回，参1：延迟撤回色图时间(秒)，0 为关闭 | 参2：监控聊天类型，0(私聊) 1(群聊) 2(群聊+私聊)
+  # ONLY_USE_LOCAL_SETU: 仅仅使用本地色图，不在线搜索
+  # INITIAL_SETU_PROBABILITY: 初始色图概率，总概率 = 初始色图概率 + 好感度
+  # DOWNLOAD_SETU: 是否存储下载的色图，使用本地色图可以加快图片发送速度
+  # TIMEOUT: 色图下载超时限制(秒)
+  # SHOW_INFO: 是否显示色图的基本信息，如PID等
+  WITHDRAW_SETU_MESSAGE:
+  - 0
+  - 1
+  ONLY_USE_LOCAL_SETU: false
+  INITIAL_SETU_PROBABILITY: 0.7
+  DOWNLOAD_SETU: true
+  TIMEOUT: 10
+  SHOW_INFO: true
+update_gocqhttp:
+  # 更新gocq
+  # UPDATE_GOCQ_GROUP: 需要为哪些群更新最新版gocq吗？（上传最新版gocq）示例：[434995955, 239483248]
+  UPDATE_GOCQ_GROUP: []
+search_anime:
+  # 搜番
+  # SEARCH_ANIME_MAX_INFO: 搜索动漫返回的最大数量
+  SEARCH_ANIME_MAX_INFO: 20
+pixiv_rank_search:
+  # P站排行/搜图
+  # TIMEOUT: 图片下载超时限制
+  # MAX_PAGE_LIMIT: 作品最大页数限制，超过的作品会被略过
+  TIMEOUT: 10
+  MAX_PAGE_LIMIT: 20
+bilibili_sub:
+  # B站订阅
+  # GROUP_BILIBILI_SUB_LEVEL: 群内bilibili订阅需要管理的权限
+  GROUP_BILIBILI_SUB_LEVEL: 5
+sign_in:
+  # 签到
+  # MAX_SIGN_GOLD: 签到好感度加成额外获得的最大金币数
+  # SIGN_CARD1_PROB: 签到好感度双倍加持卡Ⅰ掉落概率
+  # SIGN_CARD2_PROB: 签到好感度双倍加持卡Ⅱ掉落概率
+  # SIGN_CARD3_PROB: 签到好感度双倍加持卡Ⅲ掉落概率
+  MAX_SIGN_GOLD: 200
+  SIGN_CARD1_PROB: 0.2
+  SIGN_CARD2_PROB: 0.09
+  SIGN_CARD3_PROB: 0.05
+fudu:
+  # 复读
+  # FUDU_PROBABILITY: 复读概率
+  FUDU_PROBABILITY: 0.7
+ai:
+  # AI
+  # TL_KEY: 图灵Key
+  # ALAPI_AI_CHECK: 是否检测青云客骂娘回复
+  # TEXT_FILTER: 文本过滤器，将敏感词更改为*
+  TL_KEY: []
+  ALAPI_AI_CHECK: false
+  TEXT_FILTER:
+  - 鸡
+  - 口交
