@@ -3,9 +3,11 @@ PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
 zhenxun_bot_dir="/opt/zhenxun_bot"
-zhenxun_url="https://github.com/HibiKier/zhenxun_bot.git"
+zhenxun_url="https://ghproxy.com/github.com/HibiKier/zhenxun_bot.git"
 work_dir="/opt"
-sh_ver=1.0.0
+python_v="python3.8"
+which python3.9 && python_v="python3.9"
+sh_ver="1.0.1"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
@@ -68,15 +70,16 @@ Installation_dependency() {
     if [[ ${release} == "centos" ]]; then
         sudo yum -y update
         sudo yum install -y git fontconfig mkfontscale epel-release wget vim curl zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make libffi-devel
-        if [[ ! -e "/usr/local/bin/python3.8" ]];then
+        if [ ! -e "/usr/local/bin/python3.8" ] || [ ! -e "/usr/local/bin/python3.9" ] || [ ! -e "/usr/bin/python3.8" ] || [ ! -e "/usr/bin/python3.9" ];then
             wget https://mirrors.huaweicloud.com/python/3.8.10/Python-3.8.10.tgz -O /tmp/Python-3.8.10.tgz && \
                 tar -zxf /tmp/Python-3.8.10.tgz -C /tmp/ &&\
                 cd /tmp/Python-3.8.10 && \
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
+            python_v="pythono3.8"
         fi
-        python3.8 <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         sudo rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
         sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
         sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
@@ -92,13 +95,14 @@ EOF
     elif [[ ${release} == "debian" ]]; then
         sudo apt-get update
         sudo apt-get install -y wget ttf-wqy-zenhei xfonts-intl-chinese wqy* build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
-        if [[ ! -e "/usr/local/bin/python3.8" ]];then
+        if [ ! -e "/usr/local/bin/python3.8" ] || [ ! -e "/usr/local/bin/python3.9" ] || [ ! -e "/usr/bin/python3.8" ] || [ ! -e "/usr/bin/python3.9" ];then
             wget https://mirrors.huaweicloud.com/python/3.8.10/Python-3.8.10.tgz -O /tmp/Python-3.8.10.tgz && \
                 tar -zxf /tmp/Python-3.8.10.tgz -C /tmp/ &&\
                 cd /tmp/Python-3.8.10 && \
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
+            python_v="python3.8"
         fi
         sudo apt-get install -y \
             vim \
@@ -119,7 +123,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        python3.8 <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -131,27 +135,30 @@ EOF
         sudo apt-get install -y software-properties-common ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
         sudo fc-cache -f -v
         echo -e "\n" | sudo add-apt-repository ppa:deadsnakes/ppa
+        if [ ! -e "/usr/local/bin/python3.8" ] || [ ! -e "/usr/local/bin/python3.9" ] || [ ! -e "/usr/bin/python3.8" ] || [ ! -e "/usr/bin/python3.9" ];then
+            sudo apt-get install -y python3.8
+            python_v="python3.8"
+        fi
         sudo apt-get install -y \
-        python3.8 \
-        vim \
-        wget \
-        git \
-        ffmpeg \
-        postgresql \
-        postgresql-contrib \
-        libgl1 \
-        libglib2.0-0 \
-        libnss3 \
-        libatk1.0-0 \
-        libatk-bridge2.0-0 \
-        libcups2 \
-        libxkbcommon0 \
-        libxcomposite1 \
-        libxrandr2 \
-        libgbm1 \
-        libgtk-3-0 \
-        libasound2
-        python3.8 <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+            vim \
+            wget \
+            git \
+            ffmpeg \
+            postgresql \
+            postgresql-contrib \
+            libgl1 \
+            libglib2.0-0 \
+            libnss3 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libxkbcommon0 \
+            libxcomposite1 \
+            libxrandr2 \
+            libgbm1 \
+            libgtk-3-0 \
+            libasound2
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -161,7 +168,7 @@ EOF
     elif [[ ${release} == "archlinux" ]]; then
         pacman -Sy python python-pip unzip --noconfirm
     fi
-    [[ ! -e /usr/bin/python ]] && ln -s /usr/bin/python3.8 /usr/bin/python
+    [[ ! -e /usr/bin/python3 ]] && ln -s /usr/bin/python3.8 /usr/bin/python3
 }
 
 Download_zhenxun_bot() {
@@ -224,7 +231,7 @@ Start_zhenxun_bot() {
     check_pid_zhenxun
     [[ -n ${PID} ]] && echo -e "${Error} zhenxun_bot 正在运行，请检查 !" && exit 1
     cd ${work_dir}/zhenxun_bot
-    nohup python3.8 bot.py >> zhenxun_bot.log 2>&1 &
+    nohup ${python_v} bot.py >> zhenxun_bot.log 2>&1 &
     echo -e "${Info} zhenxun_bot 开始运行..."
 }
 
@@ -257,6 +264,7 @@ Start_cqhttp() {
     nohup ./go-cqhttp -faststart >> go-cqhttp.log 2>&1 &
     echo -e "${Info} go-cqhttp 开始运行..."
     echo -e "${info} 请扫描二维码登录 bot，bot 账号登录完成后，使用Ctrl + C退出 !"
+    sleep 2
 }
 
 Stop_cqhttp() {
@@ -283,7 +291,7 @@ Set_config_zhenxun() {
 Set_dependency() {
     cd ${work_dir}/zhenxun_bot
     Set_pip_Mirror
-    pip install -r https://cdn.jsdelivr.net/gh/AkashiCoin/zhenxun_bot-deploy/requirements.txt
+    pip install --ignore-installed -r https://cdn.jsdelivr.net/gh/AkashiCoin/zhenxun_bot-deploy/requirements.txt
     playwright install chromium
 }
 
