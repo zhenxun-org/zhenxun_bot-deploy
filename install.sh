@@ -7,7 +7,7 @@ zhenxun_url="https://ghproxy.com/github.com/HibiKier/zhenxun_bot.git"
 work_dir="/opt"
 python_v="python3.8"
 which python3.9 && python_v="python3.9"
-sh_ver="1.0.1"
+sh_ver="1.0.2"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
@@ -33,7 +33,7 @@ check_sys() {
     elif grep -q -E -i "centos|red hat|redhat" /proc/version; then
         release="centos"
     else
-        echo -e "zhenxun_bot 暂不支持该Linux发行版"
+        echo -e "zhenxun_bot 暂不支持该Linux发行版" && exit 1
     fi
     bit=$(uname -m)
 }
@@ -70,16 +70,16 @@ Installation_dependency() {
     if [[ ${release} == "centos" ]]; then
         sudo yum -y update
         sudo yum install -y git fontconfig mkfontscale epel-release wget vim curl zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make libffi-devel
-        if [ ! -e "/usr/local/bin/python3.8" ] || [ ! -e "/usr/local/bin/python3.9" ] || [ ! -e "/usr/bin/python3.8" ] || [ ! -e "/usr/bin/python3.9" ];then
-            wget https://mirrors.huaweicloud.com/python/3.8.10/Python-3.8.10.tgz -O /tmp/Python-3.8.10.tgz && \
-                tar -zxf /tmp/Python-3.8.10.tgz -C /tmp/ &&\
-                cd /tmp/Python-3.8.10 && \
+        if  ! which python3.8 && ! which python3.9;then
+            wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O /tmp/Python-3.9.10.tgz && \
+                tar -zxf /tmp/Python-3.9.10.tgz -C /tmp/ &&\
+                cd /tmp/Python-3.9.10 && \
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
-            python_v="pythono3.8"
+            python_v="pythono3.9"
         fi
-        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        which python3.9 || ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         sudo rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
         sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
         sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
@@ -95,14 +95,14 @@ EOF
     elif [[ ${release} == "debian" ]]; then
         sudo apt-get update
         sudo apt-get install -y wget ttf-wqy-zenhei xfonts-intl-chinese wqy* build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
-        if [ ! -e "/usr/local/bin/python3.8" ] || [ ! -e "/usr/local/bin/python3.9" ] || [ ! -e "/usr/bin/python3.8" ] || [ ! -e "/usr/bin/python3.9" ];then
-            wget https://mirrors.huaweicloud.com/python/3.8.10/Python-3.8.10.tgz -O /tmp/Python-3.8.10.tgz && \
-                tar -zxf /tmp/Python-3.8.10.tgz -C /tmp/ &&\
-                cd /tmp/Python-3.8.10 && \
+        if  ! which python3.8 && ! which python3.9;then
+            wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O /tmp/Python-3.9.10.tgz && \
+                tar -zxf /tmp/Python-3.9.10.tgz -C /tmp/ &&\
+                cd /tmp/Python-3.9.10 && \
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
-            python_v="python3.8"
+            python_v="python3.9"
         fi
         sudo apt-get install -y \
             vim \
@@ -123,7 +123,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        which python3.9 || ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -135,9 +135,9 @@ EOF
         sudo apt-get install -y software-properties-common ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
         sudo fc-cache -f -v
         echo -e "\n" | sudo add-apt-repository ppa:deadsnakes/ppa
-        if [ ! -e "/usr/local/bin/python3.8" ] || [ ! -e "/usr/local/bin/python3.9" ] || [ ! -e "/usr/bin/python3.8" ] || [ ! -e "/usr/bin/python3.9" ];then
-            sudo apt-get install -y python3.8
-            python_v="python3.8"
+        if  ! which python3.8 && ! which python3.9;then
+            sudo apt-get install -y python3.9
+            python_v="python3.9"
         fi
         sudo apt-get install -y \
             vim \
@@ -158,7 +158,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        which python3.9 || ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -168,7 +168,7 @@ EOF
     elif [[ ${release} == "archlinux" ]]; then
         pacman -Sy python python-pip unzip --noconfirm
     fi
-    [[ ! -e /usr/bin/python3 ]] && ln -s /usr/bin/python3.8 /usr/bin/python3
+    [[ ! -e /usr/bin/python3 ]] && ln -s /usr/bin/${python_v} /usr/bin/python3
 }
 
 Download_zhenxun_bot() {
@@ -199,7 +199,7 @@ Set_config_admin() {
     echo -e "${Info} 请输入管理员QQ账号(也就超级用户账号):[QQ]"
     read -erp "管理员QQ:" admin_qq
     [[ -z "$admin_qq" ]] && admin_qq=""
-    cd ${work_dir}/zhenxun_bot && sed -i "s/SUPERUSERS.*/SUPERUSERS=[\"$admin_qq\"]/g" .env.dev
+    cd ${work_dir}/zhenxun_bot && sed -i "s/SUPERUSERS.*/SUPERUSERS=[\"$admin_qq\"]/g" .env.dev || echo -e "${Error}配置文件不存在！请检查zhenxun_bot是否安装正确!"
     echo -e "${info} 设置成功!管理员QQ: ${admin_qq}"
 }
 
@@ -207,7 +207,7 @@ Set_config_bot() {
     echo -e "${Info} 请输入Bot QQ账号:[QQ]"
     read -erp "Bot QQ:" bot_qq
     [[ -z "$bot_qq" ]] && bot_qq=""
-    cd ${work_dir}/go-cqhttp && sed -i "s/uin:.*/uin: $bot_qq/g" config.yml
+    cd ${work_dir}/go-cqhttp && sed -i "s/uin:.*/uin: $bot_qq/g" config.yml || echo -e "${Error}配置文件不存在！请检查go-cqhttp是否安装正确!"
     echo -e "${info} 设置成功!Bot QQ: ${bot_qq}"
 }
 
@@ -288,10 +288,19 @@ Set_config_zhenxun() {
     vim ${work_dir}/go-cqhttp/config.yml
 }
 
+Exit_cqhttp() {
+    cd ${work_dir}/go-cqhttp
+    rm -f session.token
+    echo -e "${Info} go-cqhttp 账号已退出..."
+    Stop_cqhttp
+    sleep 3
+    menu_cqhttp
+}
+
 Set_dependency() {
     cd ${work_dir}/zhenxun_bot
     Set_pip_Mirror
-    pip install --ignore-installed -r https://cdn.jsdelivr.net/gh/AkashiCoin/zhenxun_bot-deploy/requirements.txt
+    ${python_v} -m pip install --ignore-installed -r https://cdn.jsdelivr.net/gh/AkashiCoin/zhenxun_bot-deploy/requirements.txt
     playwright install chromium
 }
 
@@ -345,6 +354,7 @@ menu_cqhttp() {
  ${Green_font_prefix} 6.${Font_color_suffix} 修改 go-cqhttp 配置文件
  ${Green_font_prefix} 7.${Font_color_suffix} 查看 go-cqhttp 日志
 ————————————
+ ${Green_font_prefix} 8.${Font_color_suffix} 退出 go-cqhttp 账号
  ${Green_font_prefix}10.${Font_color_suffix} 切换为 zhenxun_bot 菜单" && echo
   if [[ -e "${work_dir}/go-cqhttp/go-cqhttp" ]]; then
     check_pid_cqhttp
@@ -391,6 +401,9 @@ menu_cqhttp() {
     ;;
   7)
     View_cqhttp_log
+    ;;  
+  8)
+    Exit_cqhttp
     ;;
   10)
     menu_zhenxun
