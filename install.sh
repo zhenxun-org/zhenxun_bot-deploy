@@ -170,13 +170,24 @@ EOF
     [[ ! -e /usr/bin/python3 ]] && ln -s /usr/bin/${python_v} /usr/bin/python3
 }
 
+check_arch() {
+  get_arch=$(arch)
+  if [[ ${get_arch} == "x86_64" ]]; then 
+    arch="amd64"
+  elif [[ ${get_arch} == "aarch64" ]]; then
+    arch="arm64"
+  else
+    echo -e "${Error} go-cqhttp 不支持该内核版本(${get_arch})..." && exit 1
+  fi
+}
+
 Download_zhenxun_bot() {
     cd "/tmp" || exit 1
     echo -e "${Info} 开始下载最新版 zhenxun_bot ..."
     git clone "${zhenxun_url}" -b main || (echo -e "${Error} zhenxun_bot 下载失败 !" && exit 1)
     echo -e "${Info} 开始下载最新版 go-cqhttp ..."
     gocq_version=$(wget -qO- -t1 -T2 "https://api.github.com/repos/Mrs4s/go-cqhttp/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
-    wget -qO- "https://github.com/Mrs4s/go-cqhttp/releases/download/${gocq_version}/go-cqhttp_$(uname -s)_amd64.tar.gz" -O go-cqhttp.tar.gz || (echo -e "${Error} go-cqhttp 下载失败 !" && exit 1)
+    wget -qO- "https://github.com/Mrs4s/go-cqhttp/releases/download/${gocq_version}/go-cqhttp_$(uname -s)_${arch}.tar.gz" -O go-cqhttp.tar.gz || (echo -e "${Error} go-cqhttp 下载失败 !" && exit 1)
     cd "${work_dir}" || exit 1
     mv "/tmp/zhenxun_bot" ./
     mkdir -p "go-cqhttp"
@@ -307,7 +318,9 @@ Set_dependency() {
 }
 
 Install_zhenxun_bot() {
-    [[ -e "${zhenxun_bot}/bot.py" ]] && echo -e "${Error} 检测到 zhenxun_bot 已安装 !" && exit 1
+    [[ -e "${work_dir}/zhenxun_bot/bot.py" ]] && echo -e "${Error} 检测到 zhenxun_bot 已安装 !" && exit 1
+    echo -e "${Info} 开始检查系统..."
+    check_arch
     check_sys
     echo -e "${Info} 开始安装/配置 依赖..."
     Installation_dependency
