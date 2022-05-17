@@ -2,11 +2,13 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
-zhenxun_url="https://ghproxy.com/github.com/HibiKier/zhenxun_bot.git"
-work_dir="/opt"
+zhenxun_url="https://github.com/HibiKier/zhenxun_bot.git"
+work_dir="/home"
 python_v="python3.8"
 which python3.9 && python_v="python3.9"
-sh_ver="1.0.3"
+sh_ver="1.0.4"
+ghproxy="https://ghproxy.com/"
+mirror_url="https://pypi.org/simple"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
@@ -61,8 +63,14 @@ Set_pip_Mirror() {
   ${Green_font_prefix} 2.${Font_color_suffix} 清华源"
   read -erp "请输入数字 [1-2], 默认为 1:" mirror_num
   [[ -z "${mirror_num}" ]] && mirror_num=1
-  rm -rf ~/.config/pip
-  [[ ${mirror_num} == 2 ]] && sudo pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+  [[ ${mirror_num} == 2 ]] && mirror_url="https://pypi.tuna.tsinghua.edu.cn/simple"
+}
+
+Set_ghproxy() {
+  echo -e "${Info} 是否使用 ghproxy 代理git相关的下载？(中国大陆建议使用)"
+  read -erp "请选择 [y/n], 默认为 y:" ghproxy_check
+  [[ -z "${ghproxy_check}" ]] && ghproxy_check='y'
+  [[ ${ghproxy_check} == 'n' ]] && ghproxy=""
 }
 
 Installation_dependency() {
@@ -72,13 +80,13 @@ Installation_dependency() {
         if  ! which python3.8 && ! which python3.9;then
             wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O /tmp/Python-3.9.10.tgz && \
                 tar -zxf /tmp/Python-3.9.10.tgz -C /tmp/ &&\
-                cd /tmp/Python-3.9.10 && \
+                cd /tmp/Python-3.9.10 --with-ensurepip=install && \
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
             python_v="pythono3.9"
         fi
-        which python3.9 || ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         sudo rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
         sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
         sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
@@ -98,7 +106,7 @@ EOF
             wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O /tmp/Python-3.9.10.tgz && \
                 tar -zxf /tmp/Python-3.9.10.tgz -C /tmp/ &&\
                 cd /tmp/Python-3.9.10 && \
-                ./configure && \
+                ./configure --with-ensurepip=install && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
             python_v="python3.9"
@@ -122,7 +130,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        which python3.9 || ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -135,7 +143,7 @@ EOF
         sudo fc-cache -f -v
         echo -e "\n" | sudo add-apt-repository ppa:deadsnakes/ppa
         if  ! which python3.8 && ! which python3.9;then
-            sudo apt-get install -y python3.9
+            sudo apt-get install -y python3.9 python3.9-pip
             python_v="python3.9"
         fi
         sudo apt-get install -y \
@@ -157,7 +165,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        which python3.9 || ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -184,10 +192,10 @@ check_arch() {
 Download_zhenxun_bot() {
     cd "/tmp" || exit 1
     echo -e "${Info} 开始下载最新版 zhenxun_bot ..."
-    git clone "${zhenxun_url}" -b main || (echo -e "${Error} zhenxun_bot 下载失败 !" && exit 1)
+    git clone "${ghproxy}${zhenxun_url}" -b main || (echo -e "${Error} zhenxun_bot 下载失败 !" && exit 1)
     echo -e "${Info} 开始下载最新版 go-cqhttp ..."
     gocq_version=$(wget -qO- -t1 -T2 "https://api.github.com/repos/Mrs4s/go-cqhttp/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
-    wget -qO- "https://github.com/Mrs4s/go-cqhttp/releases/download/${gocq_version}/go-cqhttp_$(uname -s)_${arch}.tar.gz" -O go-cqhttp.tar.gz || (echo -e "${Error} go-cqhttp 下载失败 !" && exit 1)
+    wget -qO- "${ghproxy}https://github.com/Mrs4s/go-cqhttp/releases/download/${gocq_version}/go-cqhttp_$(uname -s)_${arch}.tar.gz" -O go-cqhttp.tar.gz || (echo -e "${Error} go-cqhttp 下载失败 !" && exit 1)
     cd "${work_dir}" || exit 1
     mv "/tmp/zhenxun_bot" ./
     mkdir -p "go-cqhttp"
@@ -313,12 +321,27 @@ Exit_cqhttp() {
 Set_dependency() {
     cd ${work_dir}/zhenxun_bot
     Set_pip_Mirror
-    ${python_v} -m pip install --ignore-installed -r https://ghproxy.com/https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-deploy/master/requirements.txt
+    ${python_v} -m pip install --ignore-installed -r ${ghproxy}https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-deploy/master/requirements.txt -i ${mirror_url}
     playwright install chromium
+}
+
+Uninstall_All() {
+  cd ${work_dir}
+  check_pid_zhenxun
+  [[ -z ${PID} ]] || kill -9 ${PID}
+  echo -e "${Info} 开始卸载 zhenxun_bot..."
+  rm -rf zhenxun_bot || echo -e "${Error} zhenxun_bot 卸载失败！"
+  check_pid_cqhttp
+  [[ -z ${PID} ]] || kill -9 ${PID}
+  echo -e "${Info} 开始卸载 go-cqhttp..."
+  rm -rf go-cqhttp || echo -e "${Error} go-cqhttp 卸载失败！"
+  echo -e "${Info} 感谢使用真寻bot，期待于你的下次相会！"
 }
 
 Install_zhenxun_bot() {
     [[ -e "${work_dir}/zhenxun_bot/bot.py" ]] && echo -e "${Error} 检测到 zhenxun_bot 已安装 !" && exit 1
+    startTime=`date +%s`
+    Set_ghproxy
     echo -e "${Info} 开始检查系统..."
     check_arch
     check_sys
@@ -336,6 +359,9 @@ Install_zhenxun_bot() {
         sudo cp -r /opt/zhenxun_bot/resources/font /usr/share/fonts/chinese
         cd /usr/share/fonts/chinese && mkfontscale
     fi
+    endTime=`date +%s`
+    ((outTime=($endTime-$startTime)))
+    echo -e "${Info} 安装用时 ${outTime} s ..."
     echo -e "${Info} 开始运行 zhenxun_bot..."
     Start_zhenxun_bot
     echo -e "${Info} 开始运行 go-cqhttp..."
@@ -433,6 +459,7 @@ menu_zhenxun() {
  ${Green_font_prefix} 6.${Font_color_suffix} 修改 zhenxun_bot 配置文件
  ${Green_font_prefix} 7.${Font_color_suffix} 查看 zhenxun_bot 日志
 ————————————
+ ${Green_font_prefix} 8.${Font_color_suffix} 卸载 zhenxun_bot + go-cqhttp
  ${Green_font_prefix}10.${Font_color_suffix} 切换为 go-cqhttp 菜单" && echo
   if [[ -e "${work_dir}/zhenxun_bot/bot.py" ]]; then
     check_pid_zhenxun
@@ -479,6 +506,9 @@ menu_zhenxun() {
     ;;
   7)
     View_zhenxun_log
+    ;;
+  8)
+    Uninstall_All
     ;;
   10)
     menu_cqhttp
