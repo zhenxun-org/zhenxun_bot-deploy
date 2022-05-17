@@ -2,12 +2,11 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
-zhenxun_bot_dir="/opt/zhenxun_bot"
 zhenxun_url="https://ghproxy.com/github.com/HibiKier/zhenxun_bot.git"
 work_dir="/opt"
 python_v="python3.8"
 which python3.9 && python_v="python3.9"
-sh_ver="1.0.2"
+sh_ver="1.0.3"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
@@ -174,7 +173,7 @@ EOF
 Download_zhenxun_bot() {
     cd "/tmp" || exit 1
     echo -e "${Info} 开始下载最新版 zhenxun_bot ..."
-    git clone "${zhenxun_url}" || (echo -e "${Error} zhenxun_bot 下载失败 !" && exit 1)
+    git clone "${zhenxun_url}" -b main || (echo -e "${Error} zhenxun_bot 下载失败 !" && exit 1)
     echo -e "${Info} 开始下载最新版 go-cqhttp ..."
     gocq_version=$(wget -qO- -t1 -T2 "https://api.github.com/repos/Mrs4s/go-cqhttp/releases/latest" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
     wget -qO- "https://github.com/Mrs4s/go-cqhttp/releases/download/${gocq_version}/go-cqhttp_$(uname -s)_amd64.tar.gz" -O go-cqhttp.tar.gz || (echo -e "${Error} go-cqhttp 下载失败 !" && exit 1)
@@ -222,8 +221,6 @@ Set_config() {
     Set_config_admin
     echo -e "${Info} 开始设置 PostgreSQL 连接语句..."
     sed -i 's|bind.*|bind: str = "postgresql://zhenxun:zxpassword@localhost:5432/zhenxun"|g' configs/config.py
-    echo -e "${Info} 开始下载 config.yaml 文件..."
-    wget https://cdn.jsdelivr.net/gh/AkashiCoin/zhenxun_bot-deploy/config.yaml -O configs/config.yaml
 }
 
 Start_zhenxun_bot() {
@@ -284,8 +281,13 @@ View_cqhttp_log() {
     tail -f -n 100 ${work_dir}/go-cqhttp/go-cqhttp.log
 }
 
-Set_config_zhenxun() {
+Set_config_cqhttp() {
     vim ${work_dir}/go-cqhttp/config.yml
+}
+
+
+Set_config_zhenxun() {
+    vim ${work_dir}/zhenxun_bot/configs/config.yaml
 }
 
 Exit_cqhttp() {
@@ -300,24 +302,13 @@ Exit_cqhttp() {
 Set_dependency() {
     cd ${work_dir}/zhenxun_bot
     Set_pip_Mirror
-    ${python_v} -m pip install --ignore-installed -r https://cdn.jsdelivr.net/gh/AkashiCoin/zhenxun_bot-deploy/requirements.txt
+    ${python_v} -m pip install --ignore-installed -r https://ghproxy.com/https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-deploy/master/requirements.txt
     playwright install chromium
 }
 
 Install_zhenxun_bot() {
     [[ -e "${zhenxun_bot}/bot.py" ]] && echo -e "${Error} 检测到 zhenxun_bot 已安装 !" && exit 1
     check_sys
-    if [[ ${release} == "centos" ]]; then
-        if grep "6\..*" /etc/redhat-release | grep -i "centos" | grep -v "{^6}\.6" >/dev/null; then
-        echo -e "${Info} 检测到你的系统为 CentOS6，该系统自带的 Python2.6 版本过低，会导致无法运行客户端，如果你有能力升级为 Python2.7或以上版本，那么请继续(否则建议更换系统)：[y/N]"
-        read -erp "(默认: N 继续安装):" sys_centos6
-        [[ -z "$sys_centos6" ]] && sys_centos6="n"
-        if [[ "${sys_centos6}" == [Nn] ]]; then
-            echo -e "\n${Info} 已取消...\n"
-            exit 1
-        fi
-        fi
-    fi
     echo -e "${Info} 开始安装/配置 依赖..."
     Installation_dependency
     echo -e "${Info} 开始下载/安装..."
