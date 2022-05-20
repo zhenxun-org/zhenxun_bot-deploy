@@ -398,7 +398,7 @@ Update_Shell(){
 menu_cqhttp() {
   echo && echo -e "  go-cqhttp 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   -- Sakura | github.com/AkashiCoin --
- ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本(无用，欢迎pr)
+ ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本
  ————————————
  ${Green_font_prefix} 1.${Font_color_suffix} 安装 zhenxun_bot + go-cqhttp
 ————————————
@@ -473,7 +473,7 @@ menu_cqhttp() {
 menu_zhenxun() {
   echo && echo -e "  zhenxun_bot 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   -- Sakura | github.com/AkashiCoin --
- ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本(无用，欢迎pr)
+ ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本
  ————————————
  ${Green_font_prefix} 1.${Font_color_suffix} 安装 zhenxun_bot + go-cqhttp
 ————————————
