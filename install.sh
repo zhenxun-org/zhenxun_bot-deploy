@@ -2,6 +2,7 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
+update_shell_url="https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-deploy/master/install.sh"
 zhenxun_url="https://github.com/HibiKier/zhenxun_bot.git"
 work_dir="/home"
 python_v="python3.8"
@@ -378,10 +379,26 @@ Install_zhenxun_bot() {
     View_cqhttp_log
 }
 
+Update_Shell(){
+    echo -e "${Info} 开始更新install.sh"
+    bak_dir_name="sh_bak/"
+    bak_file_name="${bak_dir_name}install.`date +%Y%m%d%H%M%s`.sh"
+    if [[ ! -d ${bak_dir_name} ]]; then
+        sudo mkdir -p ${bak_dir_name}
+        echo -e "${Info} 创建备份文件夹${bak_dir_name}"
+    fi
+    wget ${update_shell_url} -O install.sh.new
+    sudo cp -f install.sh ${bak_file_name}
+    echo -e "${Info} 备份原install.sh为${bak_file_name}"
+    sudo mv -f install.sh.new install.sh
+    echo -e "${Info} install.sh更新完成，请重新启动"
+    exit 0
+}
+
 menu_cqhttp() {
   echo && echo -e "  go-cqhttp 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   -- Sakura | github.com/AkashiCoin --
- ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本(无用，欢迎pr)
+ ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本
  ————————————
  ${Green_font_prefix} 1.${Font_color_suffix} 安装 zhenxun_bot + go-cqhttp
 ————————————
@@ -456,7 +473,7 @@ menu_cqhttp() {
 menu_zhenxun() {
   echo && echo -e "  zhenxun_bot 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   -- Sakura | github.com/AkashiCoin --
- ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本(无用，欢迎pr)
+ ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本
  ————————————
  ${Green_font_prefix} 1.${Font_color_suffix} 安装 zhenxun_bot + go-cqhttp
 ————————————
