@@ -77,7 +77,7 @@ Installation_dependency() {
     if [[ ${release} == "centos" ]]; then
         sudo yum -y update
         sudo yum install -y git fontconfig mkfontscale epel-release wget vim curl zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make libffi-devel
-        if  ! which python3.8 && ! which python3.9;then
+        if  ! which python3.8 && ! which python3.9; then
             wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O /tmp/Python-3.9.10.tgz && \
                 tar -zxf /tmp/Python-3.9.10.tgz -C /tmp/ &&\
                 cd /tmp/Python-3.9.10 --with-ensurepip=install && \
@@ -86,7 +86,7 @@ Installation_dependency() {
                 sudo make altinstall
             python_v="pythono3.9"
         fi
-        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
         sudo rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
         sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
         sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
@@ -130,7 +130,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -165,7 +165,7 @@ EOF
             libgbm1 \
             libgtk-3-0 \
             libasound2
-        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py)
+        ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
         /etc/init.d/postgresql start
         cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
@@ -217,7 +217,10 @@ Set_config_admin() {
     echo -e "${Info} 请输入管理员QQ账号(也就超级用户账号):[QQ]"
     read -erp "管理员QQ:" admin_qq
     [[ -z "$admin_qq" ]] && admin_qq=""
-    cd ${work_dir}/zhenxun_bot && sed -i "s/SUPERUSERS.*/SUPERUSERS=[\"$admin_qq\"]/g" .env.dev || echo -e "${Error}配置文件不存在！请检查zhenxun_bot是否安装正确!"
+    cd ${work_dir}/zhenxun_bot && \
+      sed -i "s/SUPERUSERS.*/SUPERUSERS=[\"$admin_qq\"]/g" .env.dev && \
+      sed -i "s/PORT.*/PORT = 14514/g" .env.dev || \
+      echo -e "${Error} 配置文件不存在！请检查zhenxun_bot是否安装正确!"
     echo -e "${info} 设置成功!管理员QQ: ${admin_qq}"
 }
 
@@ -225,7 +228,7 @@ Set_config_bot() {
     echo -e "${Info} 请输入Bot QQ账号:[QQ]"
     read -erp "Bot QQ:" bot_qq
     [[ -z "$bot_qq" ]] && bot_qq=""
-    cd ${work_dir}/go-cqhttp && sed -i "s/uin:.*/uin: $bot_qq/g" config.yml || echo -e "${Error}配置文件不存在！请检查go-cqhttp是否安装正确!"
+    cd ${work_dir}/go-cqhttp && sed -i "s/uin:.*/uin: $bot_qq/g" config.yml || echo -e "${Error} 配置文件不存在！请检查go-cqhttp是否安装正确!"
     echo -e "${info} 设置成功!Bot QQ: ${bot_qq}"
 }
 
@@ -234,7 +237,7 @@ Set_config() {
         echo -e "${info} go-cqhttp 配置文件已存在，跳过生成"
     else
         cd ${work_dir}/go-cqhttp && echo -e "3\n" | ./go-cqhttp > /dev/null 2>&1
-        sudo sed -i 's|universal:.*|universal: ws://localhost:8080/onebot/v11/ws|g' config.yml
+        sudo sed -i 's|universal:.*|universal: ws://localhost:14514/onebot/v11/ws|g' config.yml
     fi
     Set_config_bot
     Set_config_admin
@@ -326,16 +329,22 @@ Set_dependency() {
 }
 
 Uninstall_All() {
-  cd ${work_dir}
-  check_pid_zhenxun
-  [[ -z ${PID} ]] || kill -9 ${PID}
-  echo -e "${Info} 开始卸载 zhenxun_bot..."
-  rm -rf zhenxun_bot || echo -e "${Error} zhenxun_bot 卸载失败！"
-  check_pid_cqhttp
-  [[ -z ${PID} ]] || kill -9 ${PID}
-  echo -e "${Info} 开始卸载 go-cqhttp..."
-  rm -rf go-cqhttp || echo -e "${Error} go-cqhttp 卸载失败！"
-  echo -e "${Info} 感谢使用真寻bot，期待于你的下次相会！"
+  echo -e "${Tip} 是否完全卸载 zhenxun_bot 和 go-cqhttp？(此操作不可逆)"
+  read -erp "请选择 [y/n], 默认为 n:" uninstall_check
+  [[ -z "${uninstall_check}" ]] && uninstall_check='n'
+  if [[ ${uninstall_check} == 'y' ]]; then
+    cd ${work_dir}
+    check_pid_zhenxun
+    [[ -z ${PID} ]] || kill -9 ${PID}
+    echo -e "${Info} 开始卸载 zhenxun_bot..."
+    rm -rf zhenxun_bot || echo -e "${Error} zhenxun_bot 卸载失败！"
+    check_pid_cqhttp
+    [[ -z ${PID} ]] || kill -9 ${PID}
+    echo -e "${Info} 开始卸载 go-cqhttp..."
+    rm -rf go-cqhttp || echo -e "${Error} go-cqhttp 卸载失败！"
+    echo -e "${Info} 感谢使用真寻bot，期待于你的下次相会！"
+  fi
+  echo -e "${Info} 操作已取消..." && menu_zhenxun
 }
 
 Install_zhenxun_bot() {
@@ -372,7 +381,7 @@ Install_zhenxun_bot() {
 menu_cqhttp() {
   echo && echo -e "  go-cqhttp 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   -- Sakura | github.com/AkashiCoin --
- ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本
+ ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本(无用，欢迎pr)
  ————————————
  ${Green_font_prefix} 1.${Font_color_suffix} 安装 zhenxun_bot + go-cqhttp
 ————————————
@@ -447,7 +456,7 @@ menu_cqhttp() {
 menu_zhenxun() {
   echo && echo -e "  zhenxun_bot 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
   -- Sakura | github.com/AkashiCoin --
- ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本
+ ${Green_font_prefix} 0.${Font_color_suffix} 升级脚本(无用，欢迎pr)
  ————————————
  ${Green_font_prefix} 1.${Font_color_suffix} 安装 zhenxun_bot + go-cqhttp
 ————————————

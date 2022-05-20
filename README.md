@@ -6,6 +6,11 @@ bash <(curl -s -L https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-depl
 ```
 ## 更新
 
+**2022/05/20**
+
+* 更改监听端口为14514
+* 添加卸载二次验证 [#12](https://github.com/zhenxun-org/zhenxun_bot-deploy/issues/12)
+
 **2022/05/18** [v1.0.4]
 
 * 添加切换git源功能
