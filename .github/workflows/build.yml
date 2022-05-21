@@ -8,11 +8,8 @@ on:
 
 jobs:
   generate_requirements:
-    name: Test
+    name: Generate
     runs-on: ubuntu-latest
-    env:
-      OS: ${{ matrix.os }}
-      PYTHON_VERSION: ${{ matrix.python-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,17 +20,14 @@ jobs:
       - name: Install dependencies
         run: |
           curl https://raw.githubusercontent.com/HibiKier/zhenxun_bot/main/pyproject.toml -o pyproject.toml
-          poetry update && poetry install
+          curl https://raw.githubusercontent.com/HibiKier/zhenxun_bot/main/poetry.lock -o poetry.lock
       - name: Generate Requirements
-        run: poetry export --output requirements.txt --without-hashes
-      - name: commit file
         run: |
-          git config --local user.email "l1040186796@gmail.com"
-          git config --local user.name "AkashiCoin"
-          git add requirements.txt
-          git commit -m "generate requirements.txt from github action" -a
+          poetry export --output requirements.txt --without-hashes
+          rm -f pyproject.toml poetry.lock
       # push 
-      - name: push changes
-        uses: ad-m/github-push-action@master
+      - name: Commit & Push changes
+        uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: 'master'
