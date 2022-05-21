@@ -1,4 +1,4 @@
---index-url https://mirrors.aliyun.com/pypi/simple
+
 
 aiofiles==0.8.0; python_version >= "3.6" and python_version < "4.0"
 aiohttp==3.7.4.post0; python_version >= "3.6"
