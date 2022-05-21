@@ -85,7 +85,7 @@ Installation_dependency() {
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
                 sudo make altinstall
-            python_v="pythono3.9"
+            python_v="python3.9"
         fi
         ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
         sudo rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
@@ -366,7 +366,7 @@ Install_zhenxun_bot() {
     if [[ ${release} == "centos" ]]; then
         echo -e "${Info} CentOS 中文字体设置..."
         sudo mkdir -p /usr/share/fonts/chinese
-        sudo cp -r /opt/zhenxun_bot/resources/font /usr/share/fonts/chinese
+        sudo cp -r ${work_dir}/zhenxun_bot/resources/font /usr/share/fonts/chinese
         cd /usr/share/fonts/chinese && mkfontscale
     fi
     endTime=`date +%s`
