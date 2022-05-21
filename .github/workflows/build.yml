@@ -14,16 +14,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up Python
-        uses: he0119/setup-python@main
+        uses: actions/setup-python@v3
         with:
-          python-version: "3.9"
+          python-version: '3.9'
+          cache: 'pip'
       - name: Install dependencies
         run: |
+          pip install poetry
           curl https://raw.githubusercontent.com/HibiKier/zhenxun_bot/main/pyproject.toml -o pyproject.toml
           curl https://raw.githubusercontent.com/HibiKier/zhenxun_bot/main/poetry.lock -o poetry.lock
       - name: Generate Requirements
         run: |
           poetry export --output requirements.txt --without-hashes
+          sed -i "s/--index-url.*//g" requirements.txt
           rm -f pyproject.toml poetry.lock
       # push 
       - name: Commit & Push changes
