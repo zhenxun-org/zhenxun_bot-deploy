@@ -17,6 +17,10 @@ Info="${Green_font_prefix}[信息]${Font_color_suffix}"
 Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
+check_root(){
+	[[ $EUID != 0 ]] && echo -e "${Error} 当前非ROOT账号(或没有ROOT权限)，无法继续操作，请更换ROOT账号或使用 ${Green_background_prefix}sudo -i${Font_color_suffix} 命令获取临时ROOT权限（执行后可能会提示输入当前账号的密码）。" && exit 1
+}
+
 #检查系统
 check_sys() {
     if [[ -f /etc/redhat-release ]]; then
@@ -77,43 +81,43 @@ Set_ghproxy() {
 
 Installation_dependency() {
     if [[ ${release} == "centos" ]]; then
-        sudo yum -y update
-        sudo yum install -y git fontconfig mkfontscale epel-release wget vim curl zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make libffi-devel
+        yum -y update
+        yum install -y git fontconfig mkfontscale epel-release wget vim curl zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make libffi-devel
         if  ! which python3.8 && ! which python3.9; then
             wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O ${TMP_DIR}/Python-3.9.10.tgz && \
                 tar -zxf ${TMP_DIR}/Python-3.9.10.tgz -C ${TMP_DIR}/ &&\
                 cd ${TMP_DIR}/Python-3.9.10 --with-ensurepip=install && \
                 ./configure && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
-                sudo make altinstall
+                make altinstall
             python_v="python3.9"
         fi
         ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
-        sudo rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
-        sudo rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
-        sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-        sudo yum install -y postgresql13-server ffmpeg ffmpeg-devel atk at-spi2-atk cups-libs libxkbcommon libXcomposite libXdamage libXrandr mesa-libgbm gtk3
-        sudo /usr/pgsql-13/bin/postgresql-13-setup initdb
-        sudo systemctl enable postgresql-13
-        sudo systemctl start postgresql-13
+        rpm -v --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
+        rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+        yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+        yum install -y postgresql13-server ffmpeg ffmpeg-devel atk at-spi2-atk cups-libs libxkbcommon libXcomposite libXdamage libXrandr mesa-libgbm gtk3
+        /usr/pgsql-13/bin/postgresql-13-setup initdb
+        systemctl enable postgresql-13
+        systemctl start postgresql-13
         cat > ${TMP_DIR}/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
 CREATE DATABASE zhenxun OWNER zhenxun;
 EOF
         su postgres -c "psql -f ${TMP_DIR}/sql.sql"
     elif [[ ${release} == "debian" ]]; then
-        sudo apt-get update
-        sudo apt-get install -y wget ttf-wqy-zenhei xfonts-intl-chinese wqy* build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
+        apt-get update
+        apt-get install -y wget ttf-wqy-zenhei xfonts-intl-chinese wqy* build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
         if  ! which python3.8 && ! which python3.9;then
             wget https://mirrors.huaweicloud.com/python/3.9.10/Python-3.9.10.tgz -O ${TMP_DIR}/Python-3.9.10.tgz && \
                 tar -zxf ${TMP_DIR}/Python-3.9.10.tgz -C ${TMP_DIR}/ &&\
                 cd ${TMP_DIR}/Python-3.9.10 && \
                 ./configure --with-ensurepip=install && \
                 make -j $(cat /proc/cpuinfo |grep "processor"|wc -l) && \
-                sudo make altinstall
+                make altinstall
             python_v="python3.9"
         fi
-        sudo apt-get install -y \
+        apt-get install -y \
             vim \
             wget \
             git \
@@ -140,15 +144,15 @@ CREATE DATABASE zhenxun OWNER zhenxun;
 EOF
         su postgres -c "psql -f ${TMP_DIR}/sql.sql"
     elif [[ ${release} == "ubuntu" ]]; then
-        sudo apt-get update
-        sudo apt-get install -y software-properties-common ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
-        sudo fc-cache -f -v
-        echo -e "\n" | sudo add-apt-repository ppa:deadsnakes/ppa
+        apt-get update
+        apt-get install -y software-properties-common ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
+        fc-cache -f -v
+        echo -e "\n" | add-apt-repository ppa:deadsnakes/ppa
         if  ! which python3.8 && ! which python3.9;then
-            sudo apt-get install -y python3.9-full
+            apt-get install -y python3.9-full
             python_v="python3.9"
         fi
-        sudo apt-get install -y \
+        apt-get install -y \
             vim \
             wget \
             git \
@@ -350,6 +354,7 @@ Uninstall_All() {
 }
 
 Install_zhenxun_bot() {
+    check_root
     [[ -e "${WORK_DIR}/zhenxun_bot/bot.py" ]] && echo -e "${Error} 检测到 zhenxun_bot 已安装 !" && exit 1
     startTime=`date +%s`
     Set_ghproxy
