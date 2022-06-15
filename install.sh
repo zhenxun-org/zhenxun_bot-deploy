@@ -100,11 +100,11 @@ Installation_dependency() {
         /usr/pgsql-13/bin/postgresql-13-setup initdb
         systemctl enable postgresql-13
         systemctl start postgresql-13
-        cat > ${TMP_DIR}/sql.sql <<-EOF
+        cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
 CREATE DATABASE zhenxun OWNER zhenxun;
 EOF
-        su postgres -c "psql -f ${TMP_DIR}/sql.sql"
+        su postgres -c "psql -f /tmp//sql.sql"
     elif [[ ${release} == "debian" ]]; then
         apt-get update
         apt-get install -y wget ttf-wqy-zenhei xfonts-intl-chinese wqy* build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
@@ -138,11 +138,11 @@ EOF
             libasound2
         ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
         /etc/init.d/postgresql start
-        cat > ${TMP_DIR}/sql.sql <<-EOF
+        cat > /tmp/sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
 CREATE DATABASE zhenxun OWNER zhenxun;
 EOF
-        su postgres -c "psql -f ${TMP_DIR}/sql.sql"
+        su postgres -c "psql -f /tmp/sql.sql"
     elif [[ ${release} == "ubuntu" ]]; then
         apt-get update
         apt-get install -y software-properties-common ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
@@ -173,11 +173,11 @@ EOF
             libasound2
         ${python_v} <(curl -s -L https://bootstrap.pypa.io/get-pip.py) || echo -e "${Tip} pip 安装出错..."
         /etc/init.d/postgresql start
-        cat > ${TMP_DIR}/sql.sql <<-EOF
+        cat > /tmp//sql.sql <<-EOF
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
 CREATE DATABASE zhenxun OWNER zhenxun;
 EOF
-        su postgres -c "psql -f ${TMP_DIR}/sql.sql"
+        su postgres -c "psql -f /tmp/sql.sql"
     elif [[ ${release} == "archlinux" ]]; then
         pacman -Sy python python-pip unzip --noconfirm
     fi
