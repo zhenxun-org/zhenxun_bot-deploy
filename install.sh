@@ -8,7 +8,7 @@ WORK_DIR="/home"
 TMP_DIR="$(mktemp -d)"
 python_v="python3.8"
 which python3.9 && python_v="python3.9"
-sh_ver="1.1.1"
+sh_ver="1.1.2"
 ghproxy="https://ghproxy.com/"
 mirror_url="https://pypi.org/simple"
 
@@ -243,9 +243,19 @@ Set_config() {
 Start_zhenxun_bot() {
     check_installed_zhenxun_status
     check_pid_zhenxun
+    ${python_v} -m pip list | grep poetry > /dev/null 2>&1 || (echo "${Tip} 虚拟环境未安装,开始安装虚拟环境..." && Set_dependency)
     [[ -n ${PID} ]] && echo -e "${Error} zhenxun_bot 正在运行，请检查 !" && exit 1
     cd ${WORK_DIR}/zhenxun_bot
     nohup ${python_v} -m poetry run python3 bot.py >> zhenxun_bot.log 2>&1 &
+    echo -e "${Info} zhenxun_bot 开始运行..."
+}
+
+Start_zhenxun_bot_Old() {
+    check_installed_zhenxun_status
+    check_pid_zhenxun
+    [[ -n ${PID} ]] && echo -e "${Error} zhenxun_bot 正在运行，请检查 !" && exit 1
+    cd ${WORK_DIR}/zhenxun_bot
+    nohup ${python_v} bot.py >> zhenxun_bot.log 2>&1 &
     echo -e "${Info} zhenxun_bot 开始运行..."
 }
 
@@ -318,10 +328,9 @@ Exit_cqhttp() {
 
 Set_dependency() {
     cd ${WORK_DIR}/zhenxun_bot
-    Set_pip_Mirror
     ${python_v} -m pip install --ignore-installed poetry -i ${mirror_url}
     ${python_v} -m poetry install
-    playwright install chromium
+    ${python_v} -m playwright install chromium
 }
 
 Uninstall_All() {
@@ -358,6 +367,7 @@ Install_zhenxun_bot() {
     echo -e "${Info} 开始设置 用户配置..."
     Set_config
     echo -e "${Info} 开始配置 zhenxun_bot 环境..."
+    Set_pip_Mirror
     Set_dependency
     if [[ ${release} == "centos" ]]; then
         echo -e "${Info} CentOS 中文字体设置..."
@@ -482,6 +492,7 @@ menu_zhenxun() {
  ${Green_font_prefix} 7.${Font_color_suffix} 查看 zhenxun_bot 日志
 ————————————
  ${Green_font_prefix} 8.${Font_color_suffix} 卸载 zhenxun_bot + go-cqhttp
+ ${Green_font_prefix} 9.${Font_color_suffix} 旧版启动 zhenxun_bot
  ${Green_font_prefix}10.${Font_color_suffix} 切换为 go-cqhttp 菜单" && echo
   if [[ -e "${WORK_DIR}/zhenxun_bot/bot.py" ]]; then
     check_pid_zhenxun
@@ -531,6 +542,9 @@ menu_zhenxun() {
     ;;
   8)
     Uninstall_All
+    ;;
+  9)
+    Start_zhenxun_bot_Old
     ;;
   10)
     menu_cqhttp
