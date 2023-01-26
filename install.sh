@@ -7,8 +7,8 @@ zhenxun_url="https://github.com/HibiKier/zhenxun_bot.git"
 WORK_DIR="/home"
 TMP_DIR="$(mktemp -d)"
 python_v="python3.8"
-which python3.9 && python_v="python3.9"
-sh_ver="1.1.2"
+which python3.9 >> /dev/null 2>&1 && python_v="python3.9"
+sh_ver="1.1.3"
 ghproxy="https://ghproxy.com/"
 mirror_url="https://pypi.org/simple"
 
@@ -79,6 +79,14 @@ Set_ghproxy() {
   [[ ${ghproxy_check} == 'n' ]] && ghproxy=""
 }
 
+Set_work_dir() {
+  echo -e "${Info} 使用自定义工作目录?"
+  echo -e "${Info} 该目录下对应的文件夹将会被用于存放 zhenxun_bot 和 go-cqhttp 的相关文件"
+  read -erp "留空使用默认目录, 默认为 (/home):" work_dir_check
+  [[ -z "${work_dir_check}" ]] && WORK_DIR='/home'
+  [[ -n ${work_dir_check} ]] && WORK_DIR=${work_dir_check}
+}
+
 Installation_dependency() {
     if [[ ${release} == "centos" ]]; then
         yum -y update
@@ -104,7 +112,7 @@ Installation_dependency() {
 CREATE USER zhenxun WITH PASSWORD 'zxpassword';
 CREATE DATABASE zhenxun OWNER zhenxun;
 EOF
-        su postgres -c "psql -f /tmp//sql.sql"
+        su postgres -c "psql -f /tmp/sql.sql"
     elif [[ ${release} == "debian" ]]; then
         apt-get update
         apt-get install -y wget ttf-wqy-zenhei xfonts-intl-chinese wqy* build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev
@@ -555,4 +563,5 @@ menu_zhenxun() {
   esac
 }
 
+Set_work_dir
 menu_zhenxun
