@@ -14,6 +14,7 @@ bash <(curl -s -L https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-depl
 
 - 使用虚拟环境运行
 - 删除github action
+- 删除draw_card资源下载
 
 **2022/06/15**
 

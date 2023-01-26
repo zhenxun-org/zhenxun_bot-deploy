@@ -8,7 +8,7 @@ WORK_DIR="/home"
 TMP_DIR="$(mktemp -d)"
 python_v="python3.8"
 which python3.9 && python_v="python3.9"
-sh_ver="1.1.0"
+sh_ver="1.1.1"
 ghproxy="https://ghproxy.com/"
 mirror_url="https://pypi.org/simple"
 
@@ -206,17 +206,6 @@ Download_zhenxun_bot() {
     mv "${TMP_DIR}/zhenxun_bot" ./
     mkdir -p "go-cqhttp"
     tar -zxf "${TMP_DIR}/go-cqhttp.tar.gz" -C ./go-cqhttp/
-    echo -e "${info} 开始下载抽卡相关资源..."
-    if [[ -e "${WORK_DIR}/zhenxun_bot/draw_card" ]]; then
-        echo -e "${info} 抽卡资源文件已存在，跳过下载"
-    else
-        SOURCE_URL=https://pan.yropo.top/source/zhenxun/
-        wget ${SOURCE_URL}data_draw_card.tar.gz -qO ~/.cache/data_draw_card.tar.gz \
-            && wget ${SOURCE_URL}img_draw_card.tar.gz -qO ~/.cache/img_draw_card.tar.gz \
-            && tar -zxf ~/.cache/data_draw_card.tar.gz -C ${WORK_DIR}/zhenxun_bot/ \
-            && tar -zxf ~/.cache/img_draw_card.tar.gz -C ${WORK_DIR}/zhenxun_bot/ \
-            && rm -rf ~/.cache/*.tar.gz
-    fi
 }
 
 Set_config_admin() {
