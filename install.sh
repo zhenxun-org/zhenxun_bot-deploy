@@ -8,7 +8,7 @@ WORK_DIR="/home"
 TMP_DIR="$(mktemp -d)"
 python_v="python3.8"
 which python3.9 && python_v="python3.9"
-sh_ver="1.0.4"
+sh_ver="1.1.0"
 ghproxy="https://ghproxy.com/"
 mirror_url="https://pypi.org/simple"
 
@@ -256,7 +256,7 @@ Start_zhenxun_bot() {
     check_pid_zhenxun
     [[ -n ${PID} ]] && echo -e "${Error} zhenxun_bot 正在运行，请检查 !" && exit 1
     cd ${WORK_DIR}/zhenxun_bot
-    nohup ${python_v} bot.py >> zhenxun_bot.log 2>&1 &
+    nohup ${python_v} -m poetry run python3 bot.py >> zhenxun_bot.log 2>&1 &
     echo -e "${Info} zhenxun_bot 开始运行..."
 }
 
@@ -330,7 +330,8 @@ Exit_cqhttp() {
 Set_dependency() {
     cd ${WORK_DIR}/zhenxun_bot
     Set_pip_Mirror
-    ${python_v} -m pip install --ignore-installed -r ${ghproxy}https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-deploy/master/requirements.txt -i ${mirror_url}
+    ${python_v} -m pip install --ignore-installed poetry -i ${mirror_url}
+    ${python_v} -m poetry install
     playwright install chromium
 }
 

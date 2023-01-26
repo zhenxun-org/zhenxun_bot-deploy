@@ -10,6 +10,11 @@ bash <(curl -s -L https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-depl
 
 ## 更新
 
+**2023/01/26**
+
+- 使用虚拟环境运行
+- 删除github action
+
 **2022/06/15**
 
 - 修复运行psql时的权限问题 [#21](https://github.com/zhenxun-org/zhenxun_bot-deploy/issues/21)
