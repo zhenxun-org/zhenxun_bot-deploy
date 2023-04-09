@@ -10,6 +10,10 @@ bash <(curl -s -L https://raw.githubusercontent.com/zhenxun-org/zhenxun_bot-depl
 
 ## 更新
 
+**2023/04/09**
+
+- 修复tortoise更新出现的问题 [#33](https://github.com/zhenxun-org/zhenxun_bot-deploy/issues/33)
+
 **2023/01/26**
 
 - 使用虚拟环境运行
