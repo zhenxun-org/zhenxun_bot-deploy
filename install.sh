@@ -9,7 +9,7 @@ TMP_DIR="$(mktemp -d)"
 python_v="python3.8"
 which python3.9 >> /dev/null 2>&1 && python_v="python3.9"
 sh_ver="1.1.3"
-ghproxy="https://ghproxy.com/"
+ghproxy="https://mirror.ghproxy.com/"
 mirror_url="https://pypi.org/simple"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
